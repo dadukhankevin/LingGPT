@@ -1,11 +1,15 @@
 import openai
 
 initial_prompt = """
-Ling is an AI language model specialized at translation. Specifically Bible translation.
-This means that given a verse in Urdu, Ling will translate a back translation in Urdu that matches the Urdu in meaning.
-Ling will not add information to the translation or correct it to be more like existing Bible translations.
+Ling, you are an AI language model specialized at translation. Specifically Bible translation.
+This means that given a verse in Urdu, Ling will translate the verse to english but will
+do so in a way that is transparent to the Urdu idioms rather than translating them with equivalent english idioms. 
+Essentially what this means is that you will keep the meaning of the Urdu. You should not try to polish the english text
+whatsoever. We value transparency to the Urdu more than beautiful english style.
+Again, this is for back translation. Ling simply keeps translates the words.
+STAY VERY CLOSE TO THE URDU.
 The conversation starts now: """
-openai.api_key = "key"
+openai.api_key = <your key>
 
 
 messages = [
@@ -14,18 +18,34 @@ messages = [
   {"role": "assistant", "content": " In the very beginning, the Exalted God created the universe"}
 ]
 def respond(text):
+  r = []
+  for verse in text.split("\v"):
+    question = {"role": "user", "content": verse}
+    messages.append(question)
+    completion = openai.ChatCompletion.create(
+      model="gpt-3.5-turbo",
+      messages=messages,
+      max_tokens=1000,
+      temperature=.1,
+    )
 
-  question = {"role": "user", "content": text}
-  messages.append(question)
-  completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=messages,
-    max_tokens=1000,
-    temperature=.5,
-  )
-
-  answer = completion["choices"][0]
-  raw = answer['message']['content']
-  answer = completion["choices"][0]
-  return answer
-print(respond("""اب بلند مقام والا خدا نے حکم دیا: "روشنی ہو"""""))
+    answer = completion["choices"][0]
+    raw = answer['message']['content']
+    r.append(raw)
+    answer = completion["choices"][0]
+    messages.pop(-1)
+    print(raw)
+  return r
+text = """
+\v خدا تعالٰی نے پہلے پہل کایٔنات کو تخلیق فرمایا۔
+\v اُس وقت زمین پر حیات اور اُس کے لیٔے سازگار حالات نہ تھے۔ چاروں طرف گہرا پانی اگرچہ تاریکی میں لپٹا ہؤا تھا لیکن قدرتِ پروردگار اُس پر سایہ‌فگن تھی۔
+\v خدا تعالٰی نے حکم فرمایا: ”روشنی ہو جایٔے۔“ \v  سو ایسا ہی ہؤا۔ روشنی اسے پسند آیٔی۔ اُس نے اندھیرے اور اجالے کو ایک دوسرے سے جدا کر دیا کہ اپنے اپنے مقررہ اوقات میں ہوں۔ \v  اُس نے روشنی کو ”دن“ اور تاریکی کو ”رات“ کا نام عطا فرمایا۔ یوں مغرب ہو گیٔی، پھر فجر ہویٔی اور پہلا دن تمام ہؤا۔
+\v اگلے دن خدا تعالٰی نے فرمایا: ”پانی کے درمیان خلا بن جایٔے تاکہ کچھ پانی خلا کے اوپر اور کچھ نیچے رہ جایٔے۔“ \v  سو ایسا ہی ہؤا۔ \v  اِس طرح خلا بنا کر خدا تعالٰی نے اُسے ”آسمان“ کا نام عطا فرمایا۔ یوں مغرب ہو گیٔی، پھر فجر ہویٔی اور دوسرا دن تمام ہؤا۔
+\v تیسرے دن خدا تعالٰی نے فرمایا: ”آسمان کے نیچے کا پانی ایک جگہ جمع ہو جایٔے اور خشکی ظاہر ہو۔“ سو ایسا ہی ہؤا۔ \v  اُس نے خشکی کو ”زمین“ کا نام عطا فرمایا اور پانی کے اجتماع کو ”سمندر“ کا۔ یہ سب اسے پسند آیا۔ \v  اِس کے بعد خدا تعالٰی نے فرمایا: ”زمین سب اقسام کی بیج‌دار نباتات اگایٔے جو پھل بڑھ سکیں اور اپنے جیسے مزید پیدا کر سکیں۔ سو ایسا ہی ہؤا۔ \v  اِس طرح زمین سبزے سے بھر گیٔی۔ سبزہ خدا تعالٰی کو پسند آیا۔ \v  یوں مغرب ہو گیٔی، پھر فجر ہویٔی اور تیسرا دن تمام ہؤا۔
+\v ‏- چوتھے دن خدا تعالٰی نے فرمایا: ”آسمان پر نیّر ہوں جو دن کو رات سے جدا کریں، زمین کو منور کریں اور دنوں برسوں اور تہواروں کا حساب رکھنے کے لیٔے نشان ہوں۔“ سو ایسا ہی ہؤا۔ \v  اِس طرح اُس نے دو بڑی روشنیاں بنایٔیں، سورج کہ دن کے اوقات طے کرے اور چاند رات کے۔ ان کے ساتھ ہی اُس نے ستارے بھی بنایٔے اور ان سب کو آسمان کی وسعتوں میں جَڑ دیا۔ یہ سب اسے پسند آیا۔ \v  یوں مغرب ہو گیٔی، پھر فجر ہویٔی اور چوتھا دن تمام ہؤا۔
+\v  پانچویں دن خدا تعالٰی نے فرمایا: ”آبی جاندار پانی میں تیرتے پھریں اور اڑنے والے جاندار فضا میں اڑیں۔“ \v  اِس طرح اُس نے پانی میں بڑے بڑے اور ہیبت‌ناک جانداروں سمیت لاتعداد اقسام کے تیرنے والے اور ہر قسم کے اڑنے والے جاندار بھی تخلیق فرمایٔے۔ یہ سب خدا تعالٰی کو پسند آیا۔ \v  اُس نے ان سب کو پھلنے بڑھنے کی نعمت عطا فرماتے ہویٔے آبی جانداروں سے فرمایا: ”سمندروں کو بھر دو“ اور اڑنے والے جانداروں سے فرمایا: ”زمین پر بڑھتے چلے جاؤ۔“ \v  یوں مغرب ہو گیٔی، پھر فجر ہویٔی اور پانچواں دن تمام ہؤا۔
+\v  چھٹے دن خدا تعالٰی نے فرمایا: ”زمین ہر قسم کے جاندار سے بھر جایٔے — مویشی، جنگلی اور رینگنے والے جانور بھی۔“ سو ایسا ہی ہؤا۔ \v  اِس طرح اُس نے زمین پر چلنے والے جاندار بنایٔے اور یہ سب اسے پسند آیا۔
+\v  اِس کے بعد خدا تعالٰی نے انسان کو بنانے کا ارادہ کیا جو اُس کی صفات کا مظہر، زمین پر اُس کا خلیفہ اور اشرف المخلوقات ہو۔ \v  پس اُس نے انسان کو مرد و زن تخلیق فرما کر اپنا خلیفہ مقرر کیا اور اُنھیں صلاحیت عطا فرمایٔی کہ وہ پھلیں، بڑھیں اور زمین کی تمام مخلوقات اپنے قابو میں کریں۔ اِس کے ساتھ ہی خدا تعالٰی نے ان سے فرمایا: ”زمین کو بھر دو اور فضا، پانی اور خشکی کے تمام جانداروں کو تابع کر لو۔“
+\v ‏- پھر خدا تعالٰی نے فرمایا: ”میں نے تمھیں ہر قسم کا اناج، پھل اور سبزیاں کھانے کو بخش دی ہیں جب~کہ فضا اور خشکی کے جانداروں کو ہر قسم کی گھاس پات۔“ \zarab وَاللہ خَیْرُ الرّازقین!\zarab* (بےشک! اللہ بہترین رازق ہے)۔ \v  پس خدا تعالٰی کو یہ سب پسند آیا جو بنا چکا تھا کیوں~کہ سب کچھ کامل تھا۔ یوں مغرب ہو گیٔی، پھر فجر ہویٔی اور چھٹا دن تمام ہؤا۔
+"""
+print(respond(text))
